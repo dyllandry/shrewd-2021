@@ -5,15 +5,15 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     [SerializeField]
-    List<Need> Needs;
+    NeedList needList;
 
     void Start()
     {
-        foreach (Need need in this.Needs) need.Reset();
+        foreach (Need need in this.needList.Needs) need.Reset();
     }
 
     void Update()
     {
-        foreach (Need need in this.Needs) need.Decay(); 
+        foreach (Need need in this.needList.Needs) need.Decay(); 
     }
 }
