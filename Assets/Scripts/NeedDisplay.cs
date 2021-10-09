@@ -5,7 +5,19 @@ using UnityEngine.UI;
 
 public class NeedDisplay : MonoBehaviour
 {
-    public Need need;
+    private Need need;
+    public Need Need
+    {
+        get => need;
+        set
+        {
+            need = value;
+            this.nameText.text = Need.Label;
+            this.prevValue = this.Need.Value;
+            this.valueDelta = 0;
+            this.prevSampleTime = Time.time;
+        }
+    }
 
     // Used for periodically sampling change in need's value and displaying # of decreasing/increasing arrows.
     [SerializeField]
@@ -41,38 +53,35 @@ public class NeedDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        this.nameText.text = need.Label;
-
-        this.prevValue = this.need.Value;
-        this.valueDelta = 0;
-        this.prevSampleTime = Time.time;
-
-        this.arrowsLeftImage.sprite = null;
-        this.arrowsRightImage.sprite = null;
+        this.arrowsLeftImage.enabled = false;
+        this.arrowsRightImage.enabled = false;
     }
 
     private void Update()
     {
-        bar.value = need.Value;
+        bar.value = Need.Value;
 
         if (Time.time - this.prevSampleTime > this.sampleInterval)
         {
-            this.valueDelta = this.need.Value - this.prevValue;
+            this.valueDelta = this.Need.Value - this.prevValue;
             this.prevSampleTime = Time.time;
-            this.prevValue = this.need.Value;
+            this.prevValue = this.Need.Value;
             this.UpdateValueChangeSprites();
         }
     }
 
     private void UpdateValueChangeSprites()
     {
-        this.arrowsLeftImage.sprite = null;
-        this.arrowsRightImage.sprite = null;
+        this.arrowsLeftImage.enabled = false;
+        this.arrowsRightImage.enabled = false;
 
         float changePerSecond = this.valueDelta / (this.sampleInterval / 1);
         float sign = Mathf.Sign(this.valueDelta);
 
         if (changePerSecond == 0) return;
+
+        if (sign > 0) this.arrowsRightImage.enabled = true;
+        else this.arrowsLeftImage.enabled = true;
 
         float minutesForRate0To1 = Mathf.Abs(1 / (changePerSecond * 60)); // 1 is the max need value
 
@@ -91,6 +100,5 @@ public class NeedDisplay : MonoBehaviour
             if (sign > 0) this.arrowsRightImage.sprite = this.oneArrowRightSprite;
             else this.arrowsLeftImage.sprite = this.oneArrowLeftSprite;
         }
-
     }
 }
