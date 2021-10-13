@@ -16,6 +16,15 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
-        this.transform.position = this.character.position + this.cameraOffset;
+        if (Input.GetAxisRaw("Horizontal") > 0)
+        {
+            this.cameraOffset = Quaternion.AngleAxis(1 * 90 * Time.deltaTime, Vector3.up) * cameraOffset;
+        }
+        else if (Input.GetAxisRaw("Horizontal") < 0)
+        {
+            this.cameraOffset = Quaternion.AngleAxis(-1 * 90 * Time.deltaTime, Vector3.up) * cameraOffset;
+        }
+        transform.position = this.character.position + this.cameraOffset;
+        transform.LookAt(this.character.position);
     }
 }
